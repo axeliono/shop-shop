@@ -8,6 +8,8 @@ import spinner from "../../assets/spinner.gif";
 import { useStoreContext } from "../../utils/GlobalState";
 import { UPDATE_PRODUCTS } from "../../utils/actions";
 
+import { isdbPromise } from '../../utils/helpers';
+
 function ProductList() {
   const [state, dispatch] = useStoreContext();
   const { currentCategory } = state;
@@ -19,8 +21,19 @@ function ProductList() {
         type: UPDATE_PRODUCTS,
         products: data.products,
       });
+
+      data.products.forEach((product) => {
+        isdbPromise('products', 'put', product);
+      })
+    } else if (!loading) {
+      isdbPromise('products', 'get').then((products) => {
+        dispatch({
+          type:UPDATE_PRODUCTS,
+          products: products
+        });
+      });
     }
-  }, [data, dispatch]);
+  }, [data, loading, dispatch]);
 
   function filterProducts() {
     if (!currentCategory) {

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <!-- cdn for stripe library -->
+  <script src="https://js.stripe.com/v3/"></script>
+
+  <script>
+    // use client-side test api key
+    var stripe = Stripe('pk_test_TYooMQauvdEDq54NiTphI7jx');
+
+    // immediately redirect to stripe using your checkout session
+    stripe.redirectToCheckout({
+      sessionId: 'cs_test_b1GQsO8YqToFngcC5DHsGO2gXZq39M0iGthjQQwPk2TzEoq5Ohmfh7aIBk'
+    });
+  </script>
+</body>
+</html>
+
+<!-- {
+  "id": "cs_test_a1F1fqpmahVUOnf1SYZXy8lBvBV7RPpQwRVOO5bpURvLzz6O8k2FLxZgMK",
+  "object": "checkout.session",
+  "allow_promotion_codes": null,
+  "amount_subtotal": 2000,
+  "amount_total": 2000,
+  "billing_address_collection": null,
+  "cancel_url": "https://example.com/cancel",
+  "client_reference_id": null,
+  "currency": "usd",
+  "customer": null,
+  "customer_details": null,
+  "customer_email": null,
+  "livemode": false,
+  "locale": null,
+  "metadata": {
+  },
+  "mode": "payment",
+  "payment_intent": "pi_1IaU2d2eZvKYlo2CqYTkr05N",
+  "payment_method_types": [
+    "card"
+  ],
+  "payment_status": "unpaid",
+  "setup_intent": null,
+  "shipping": null,
+  "shipping_address_collection": null,
+  "submit_type": null,
+  "subscription": null,
+  CHECKOUT_SESSION_ID "success_url": "https://example.com/success?session_id=sk_test_4eC39HqLyjWDarjtT1zdp7dc",
+  "total_details": {
+    "amount_discount": 0,
+    "amount_shipping": 0,
+    "amount_tax": 0
+  }
+} -->

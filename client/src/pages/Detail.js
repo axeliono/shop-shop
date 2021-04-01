@@ -4,7 +4,7 @@ import { useQuery } from "@apollo/react-hooks";
 
 import { QUERY_PRODUCTS } from "../utils/queries";
 import spinner from "../assets/spinner.gif";
-import { useStoreContext } from "../utils/GlobalState";
+import { useSelector, useDispatch } from 'react-redux';
 import {
   REMOVE_FROM_CART,
   UPDATE_CART_QUANTITY,
@@ -13,48 +13,16 @@ import {
 } from "../utils/actions";
 import Cart from "../components/Cart";
 
-import { isdbPromise } from '../utils/helpers';
+import { isdbPromise } from "../utils/helpers";
 
 function Detail() {
-  const [state, dispatch] = useStoreContext();
+  const dispatch = useDispatch();
+  const state = useSelector((state) => state);
   const { id } = useParams();
 
   const [currentProduct, setCurrentProduct] = useState({});
   const { loading, data } = useQuery(QUERY_PRODUCTS);
   const { products, cart } = state;
-
-  const addToCart = () => {
-    const itemInCart = cart.find((cartItem) => cartItem._id === id);
-
-    if (itemInCart) {
-      dispatch({
-        type: UPDATE_CART_QUANTITY,
-        _id: id,
-        purchaseQuantity: parseInt(itemInCart.purchaseQuantity) + 1,
-      });
-
-      isdbPromise('cart', 'put', {
-        ...itemInCart,
-        purchaseQuantity: parseInt(itemInCart.purchaseQuantity) + 1
-      });
-    } else {
-      dispatch({
-        type: ADD_TO_CART,
-        product: { ...currentProduct, purchaseQuantity: 1 },
-      });
-
-      isdbPromise('cart', 'put', { ...currentProduct, purchaseQuantity: 1});
-    }
-  };
-
-  const removeFromCart = () => {
-    dispatch({
-      type: REMOVE_FROM_CART,
-      _id: currentProduct._id,
-    });
-
-    isdbPromise('cart', 'delete', {...currentProduct})
-  };
 
   useEffect(() => {
     if (products.length) {
@@ -66,22 +34,54 @@ function Detail() {
       });
 
       data.products.forEach((product) => {
-        isdbPromise('products', 'put', product);
+        isdbPromise("products", "put", product);
       });
-    }
-    else if (!loading) {
-      isdbPromise('products', 'get').then((indexedProducts) => {
+    } else if (!loading) {
+      isdbPromise("products", "get").then((indexedProducts) => {
         dispatch({
           type: UPDATE_PRODUCTS,
-          products: indexedProducts
+          products: indexedProducts,
         });
       });
     }
   }, [products, data, loading, dispatch, id]);
 
+  const addToCart = () => {
+    const itemInCart = cart.find((cartItem) => cartItem._id === id);
+
+    if (itemInCart) {
+      dispatch({
+        type: UPDATE_CART_QUANTITY,
+        _id: id,
+        purchaseQuantity: parseInt(itemInCart.purchaseQuantity) + 1,
+      });
+
+      isdbPromise("cart", "put", {
+        ...itemInCart,
+        purchaseQuantity: parseInt(itemInCart.purchaseQuantity) + 1,
+      });
+    } else {
+      dispatch({
+        type: ADD_TO_CART,
+        product: { ...currentProduct, purchaseQuantity: 1 },
+      });
+
+      isdbPromise("cart", "put", { ...currentProduct, purchaseQuantity: 1 });
+    }
+  };
+
+  const removeFromCart = () => {
+    dispatch({
+      type: REMOVE_FROM_CART,
+      _id: currentProduct._id,
+    });
+
+    isdbPromise("cart", "delete", { ...currentProduct });
+  };
+
   return (
     <>
-      {currentProduct ? (
+      {currentProduct && cart ? (
         <div className="container my-1">
           <Link to="/">← Back to Products</Link>
 

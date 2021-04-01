@@ -5,13 +5,15 @@ import ProductItem from "../ProductItem";
 import { QUERY_PRODUCTS } from "../../utils/queries";
 import spinner from "../../assets/spinner.gif";
 
-import { useStoreContext } from "../../utils/GlobalState";
 import { UPDATE_PRODUCTS } from "../../utils/actions";
 
-import { isdbPromise } from '../../utils/helpers';
+import { isdbPromise } from "../../utils/helpers";
+
+import { useSelector, useDispatch } from "react-redux";
 
 function ProductList() {
-  const [state, dispatch] = useStoreContext();
+  const state = useSelector((state) => state);
+  const dispatch = useDispatch();
   const { currentCategory } = state;
   const { loading, data } = useQuery(QUERY_PRODUCTS);
 
@@ -23,13 +25,13 @@ function ProductList() {
       });
 
       data.products.forEach((product) => {
-        isdbPromise('products', 'put', product);
-      })
+        isdbPromise("products", "put", product);
+      });
     } else if (!loading) {
-      isdbPromise('products', 'get').then((products) => {
+      isdbPromise("products", "get").then((products) => {
         dispatch({
-          type:UPDATE_PRODUCTS,
-          products: products
+          type: UPDATE_PRODUCTS,
+          products: products,
         });
       });
     }
